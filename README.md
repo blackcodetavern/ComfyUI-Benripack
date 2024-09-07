@@ -28,6 +28,10 @@ This node manages character information and prompts for image generation.
 
 The node combines all inputs into a CharacterPipe object that can be used for further processing in the image generation pipeline.
 
+## Example
+
+![Example](img/character_pipe.png)
+
 ## 2. Benri Load 3D Model
 
 This node loads a 3D model (.fbx) from the 3d_models directory in the root of your ComfyUI installation. Before using this node create the
@@ -44,8 +48,7 @@ The node loads the selected 3D model.
 ## 3. Benri Animation Extractor
 
 This node extracts animation frames from a 3D model. If you select 4 rows and 4 columns the node will take a snapshot every 1/16 of the
-animation time. You can set the orientation of the model. You can also rotate the model. The created tile-image can be used to create consistent
-animations of the given object.
+animation time aligned in a 4x4 grid. You can set the orientation of the model. You can also rotate the model. The created tile-image can be used to create consistent animations of the given object.
 
 ### Parameters:
 
@@ -58,15 +61,15 @@ animations of the given object.
 
 The node generates an image with multiple frames of an animation based on the given 3D model and specified parameters.
 
-## Example GIFs
+## Example
 
-Here are some example GIFs demonstrating the functionality of these nodes:
+Here are some example GIFs demonstrating what you could do with the output of the nodes:
 
 ![Example 1](img/workflow.png)
 
-![Example 2](img/walk.gif)
+![Pixel art walking animation created of the input image](img/walk.gif)
 
-![Example 3](img/jump.gif)
+![Pixel art jumping animation created of the input image](img/jump.gif)
 
 ## Installation
 

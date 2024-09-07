@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-benripack"
-description = "ComfyUI-Benripack is an extension for ComfyUI that provides a CharacterPip node to simplify workflows, a 3d model loader and an AnimationExtractor to generate tilesets from animated 3d-models"
+description = "ComfyUI-Benripack is an extension for ComfyUI that provides a CharacterPipe node to simplify workflows, a 3d model loader and an AnimationExtractor to generate keyframe tilesets from animated 3d-models"
 version = "1.0.0"
 license = {file = "LICENSE"}
 
