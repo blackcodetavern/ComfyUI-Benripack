@@ -1,6 +1,6 @@
 [project]
 name = "comfyui-benripack"
-description = "ComfyUI-Benripack is an extension for ComfyUI that provides a CharacterPipe node. This node allows for managing various elements such as images, prompts, and models in a single structure, simplifying the workflow for character-based image generation."
+description = "ComfyUI-Benripack is an extension for ComfyUI that provides a CharacterPip node to simplify workflows, a 3d model loader and an AnimationExtractor to generate tilesets from animated 3d-models"
 version = "1.0.0"
 license = {file = "LICENSE"}
 
@@ -9,6 +9,6 @@ Repository = "https://github.com/blackcodetavern/ComfyUI-Benripack"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "blackcodetavern"
 DisplayName = "ComfyUI-Benripack"
 Icon = ""
