@@ -1,6 +1,23 @@
 import torch
 import numpy as np
 import comfy.model_management as model_management
+import folder_paths
+from PIL import Image, ImageOps
+import os
+from server import PromptServer
+import shutil
+import __main__
+
+class Model3D:
+    def __init__(self, model_path):
+        self.model_path = model_path
+    
+    def to_dict(self):
+        return {
+            "class_type": "Model3D",
+            "model_path": self.model_path
+        }
+
 
 class CharacterPipe:
     def __init__(self, face_image=None, pose_image=None, positive_master_prompt=None, negative_master_prompt=None, positive_char_prompt=None, negative_char_prompt=None, model=None, clip=None, vae=None, ipadapter=None):
@@ -122,11 +139,98 @@ class CharacterPipeNode:
             out.append(n)
         
         return out
+    
+
+class AnimationExtractor:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "cols": ("INT", {"default": 4, "min": 1, "max": 20, "step": 1}),
+                "rows": ("INT", {"default": 4, "min": 1, "max": 20, "step": 1}),
+            },
+            "optional": {
+                "orientation": (["Front", "Back", "Left", "Right", "Rotate"],),
+                "model": ("MODEL_3D",),
+            },
+            "hidden": {
+                "unique_id": "UNIQUE_ID",
+            }
+        }
+    
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("animation",)
+
+    @classmethod
+    def IS_CHANGED(s):
+        # This method tells ComfyUI to always consider the node as changed for certain inputs
+        return float("NaN")
+
+    FUNCTION = "extract_animation"
+
+
+    def extract_animation(self, cols=4, rows=4, orientation="Front", model=None, unique_id=None):
+        temp_dir = folder_paths.get_temp_directory()
+
+        image_path = os.path.join(temp_dir, "animation_"+unique_id+".png") 
+        i = Image.open(image_path)
+        poseImage = i.convert("RGB")
+        poseImage = np.array(poseImage).astype(np.float32) / 255.0
+        poseImage = torch.from_numpy(poseImage)[None,]        
+        return (poseImage, poseImage)
+
+
+
+folder_paths.add_model_folder_path("3d_models","./ComfyUI/3d_models")
+
+def copy_files():
+    files = folder_paths.get_filename_list("3d_models")
+    if not os.path.exists("./ComfyUI/custom_nodes/ComfyUI-Benripack/web/3d_models"):
+        os.makedirs("./ComfyUI/custom_nodes/ComfyUI-Benripack/web/3d_models")
+        
+    if len(files) > 0:
+        for file in files:
+            shutil.copy( os.path.join("./ComfyUI/3d_models/", file), "./ComfyUI/custom_nodes/ComfyUI-Benripack/web/3d_models")
+
+
+class Load3DModel:
+    @classmethod
+    def INPUT_TYPES(s):
+        copy_files()
+        return {
+            "required": {
+                "model_name": (folder_paths.get_filename_list("3d_models"), ),
+            },
+            "optional": {
+            }
+        }
+    
+    RETURN_TYPES = ("MODEL_3D",)
+    RETURN_NAMES = ("3d model",)
+    FUNCTION = "load_model"
+
+    def load_model(self, model_name):
+        model_path = folder_paths.get_full_path("3d_models", model_name)
+        model = Model3D(model_path)
+
+        return (model,)
+    
+    @classmethod
+    def IS_CHANGED(s, model_name):
+        copy_files()
+        # This method tells ComfyUI to always consider the node as changed for certain inputs
+        return float("NaN")
 
 NODE_CLASS_MAPPINGS = {
-    "CharacterPipe": CharacterPipeNode
+    "CharacterPipe": CharacterPipeNode,
+    "Load3DModel": Load3DModel,
+    "AnimationExtractor": AnimationExtractor
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "CharacterPipe": "Character Pipe"
+    "CharacterPipe": "Benri Character Pipe",
+    "Load3DModel": "Benri Load 3D Model",
+    "AnimationExtractor": "Benri Animation Extractor"
 }
+
+WEB_DIRECTORY = "./web"
